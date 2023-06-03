@@ -3,11 +3,15 @@ DropEgg:
    Enable: true
    #Egg drop chance spawning mob (0.0-1.0)
    Chance: 0.1 
+   Blacklist:
+   - ENDER_DRAGON
 CurrencyDrop:
    MinAmount: 10
    MaxAmount: 100
    #This line sends a message to the player about receiving currency.
    Msg: "You received {amount} currency for killing a {entity}."
+   Blacklist:
+   - ENDER_DRAGON
 ConfigReloadMsg: "&aConfig reloaded"
 NotPermMsg: "&cYou do not have permission."  
 Entity:
