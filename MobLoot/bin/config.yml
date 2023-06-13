@@ -3,6 +3,8 @@ DropEgg:
    Enable: true
    #Egg drop chance spawning mob (0.0-1.0)
    Chance: 0.1 
+   #Rename monster_egg to anvil
+   Rename: true
    Blacklist:
    - ENDER_DRAGON
 CurrencyDrop:

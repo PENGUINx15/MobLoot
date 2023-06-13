@@ -11,8 +11,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import net.milkbowl.vault.economy.Economy;
+
+import org.bukkit.inventory.AnvilInventory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +29,7 @@ public class mobloot extends JavaPlugin implements Listener {
 
     private double eggDropChance;
     private boolean dropEggEnable;
+    private boolean renameEgg;
     private double currencyDropChance;
     private int CurrencyDropsMin;
     private int CurrencyDropsMax;
@@ -38,6 +44,7 @@ public class mobloot extends JavaPlugin implements Listener {
         message = message.replace("{amount}", String.valueOf(amount));
         return message;
     }
+    
     private String getFriendlyName(EntityType entityType) {
         return WordUtils.capitalizeFully(entityType.name().replace("_", " "));
     }
@@ -52,6 +59,7 @@ public class mobloot extends JavaPlugin implements Listener {
     private void loadConfigValues() {
         eggDropChance = getConfig().getDouble("DropEgg.Chance", 0.1);
         dropEggEnable = getConfig().getBoolean("DropEgg.Enable", true);
+        renameEgg = getConfig().getBoolean("DropEgg.Rename", true);
         currencyDropChance = getConfig().getDouble("CurrencyDrop.Chance", 0.1);
         CurrencyDropsMin = getConfig().getInt("CurrencyDrop.MinAmount", 10);
         CurrencyDropsMax = getConfig().getInt("CurrencyDrop.MaxAmount", 100);
@@ -137,8 +145,10 @@ public class mobloot extends JavaPlugin implements Listener {
             int min = CurrencyDropsMin;
             int max = CurrencyDropsMax;
             int amount = new Random().nextInt(max - min + 1) + min;
+            Economy economy = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 
-            player.sendMessage(getCurrencyMessage(entityType, amount).replace("&", "§"));
+            economy.depositPlayer(player, amount);
+            player.sendMessage(getCurrencyMessage(entityType, amount));
         }
     }
 
@@ -165,6 +175,17 @@ public class mobloot extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPrepareAnvil(PrepareAnvilEvent event) {
+    	if (renameEgg) {
+        AnvilInventory inventory = event.getInventory();
+        ItemStack inputItem = inventory.getItem(0);
+        if (inputItem != null && inputItem.getType() == Material.MONSTER_EGG) {
+            event.setResult(null);
+        }
+    	}
+    }
+    
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("mobloot")) {
