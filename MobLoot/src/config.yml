@@ -4,17 +4,28 @@ DropEgg:
    #Egg drop chance spawning mob (0.0-1.0)
    Chance: 0.1 
    #Rename monster_egg to anvil
-   Rename: true
+   #false rename
+   #true do not rename 
+   Rename: false
+   #Summon a mob from an egg
+   #false summon
+   #true do not summon
+   SpawnFromEgg: false
    Blacklist:
    - ENDER_DRAGON
 CurrencyDrop:
    MinAmount: 10
    MaxAmount: 100
    #This line sends a message to the player about receiving currency.
-   Msg: "You received {amount} currency for killing a {entity}."
+   Message: "You received {amount} currency for killing a {entity}."
+   #Drop an item with money from a mob after a kill
+   DropItem:
+    Enable: false
+    Material: GOLD_INGOT
+    Message: "You received {amount} currency."
    Blacklist:
    - ENDER_DRAGON
-ConfigReloadMsg: "&aConfig reloaded"
+ConfigReloadMsg: "&aPlugin reloaded"
 NotPermMsg: "&cYou do not have permission."  
 Entity:
   '1':
