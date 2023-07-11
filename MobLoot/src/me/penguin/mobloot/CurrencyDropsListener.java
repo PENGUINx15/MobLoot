@@ -88,38 +88,20 @@ public class CurrencyDropsListener implements Listener {
         ItemStack item = event.getItem().getItemStack();  
         
         if (item.getType() == mobLootConfig.getDropItemMaterial()) {
-            if (item.getType() == mobLootConfig.getDropItemMaterial() && item.containsEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL) && item.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 4) {
-                int min = mobLootConfig.getCurrencyDropsMin();
-                int max = mobLootConfig.getCurrencyDropsMax();
-                int amount = new Random().nextInt(max - min + 1) + min;
+            int min = mobLootConfig.getCurrencyDropsMin();
+            int max = mobLootConfig.getCurrencyDropsMax();
+            int amount = new Random().nextInt(max - min + 1) + min;
 
+            int dropItemCount = item.getAmount();
+            for (int i = 0; i < dropItemCount; i++) {
                 Economy economy = plugin.getServer().getServicesManager().getRegistration(Economy.class).getProvider();
-                economy.depositPlayer(event.getPlayer(), amount);
-
-                player.sendMessage(getDropItemMessage(EntityType.UNKNOWN, amount).replace("&", "§"));
-
-                event.getItem().remove();
-                event.setCancelled(true);
+                economy.depositPlayer(player, amount);
             }
-        }
-    }
 
-    @EventHandler
-    public void onItemPickup(InventoryPickupItemEvent event) {
-        ItemStack item = event.getItem().getItemStack();
-        if (item.getType() == mobLootConfig.getDropItemMaterial() && item.containsEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL) && item.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 4) {
+            player.sendMessage(getDropItemMessage(EntityType.UNKNOWN, dropItemCount * amount).replace("&", "§"));
+
+            event.getItem().remove();
             event.setCancelled(true);
-        }
-    }
-    
-    @EventHandler
-    public void onItemMerge(ItemMergeEvent event) {
-        Item mergedItem = event.getEntity();
-        ItemStack itemStack = mergedItem.getItemStack();
-        
-        if (itemStack.getType() == mobLootConfig.getDropItemMaterial() && itemStack.containsEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL) && itemStack.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 4 && itemStack.getAmount() > 1) {
-            itemStack.setAmount(1);
-            mergedItem.setItemStack(itemStack);
         }
     }
 }
