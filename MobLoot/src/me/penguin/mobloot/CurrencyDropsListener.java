@@ -5,10 +5,12 @@ import java.util.Random;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -107,6 +109,17 @@ public class CurrencyDropsListener implements Listener {
         ItemStack item = event.getItem().getItemStack();
         if (item.getType() == mobLootConfig.getDropItemMaterial() && item.containsEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL) && item.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 4) {
             event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onItemMerge(ItemMergeEvent event) {
+        Item mergedItem = event.getEntity();
+        ItemStack itemStack = mergedItem.getItemStack();
+        
+        if (itemStack.getType() == mobLootConfig.getDropItemMaterial() && itemStack.containsEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL) && itemStack.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 4 && itemStack.getAmount() > 1) {
+            itemStack.setAmount(1);
+            mergedItem.setItemStack(itemStack);
         }
     }
 }
