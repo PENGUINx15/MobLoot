@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 
 public class MobLoot extends JavaPlugin implements Listener {
@@ -35,7 +36,7 @@ public class MobLoot extends JavaPlugin implements Listener {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         if (command.getName().equalsIgnoreCase("mobloot")) {
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("mobloot.reload")) {
@@ -43,14 +44,12 @@ public class MobLoot extends JavaPlugin implements Listener {
                     Bukkit.getPluginManager().disablePlugin(this);
                     Bukkit.getPluginManager().enablePlugin(this);
 
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
+                    if (sender instanceof Player player) {
                         messageManager.sendMessage(player, config.getString("config.yml","ConfigReloadMsg"));
                     }
                     return true;
                 } else {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
+                    if (sender instanceof Player player) {
                         messageManager.sendMessage(player, config.getString("config.yml", "NotPermMsg"));
                     }
                     return true;

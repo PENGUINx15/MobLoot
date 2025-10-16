@@ -2,6 +2,7 @@ package me.penguin.mobloot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import me.penguin.mobloot.API.ConfigManager;
@@ -10,10 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class DropEggListener implements Listener {
@@ -39,7 +38,7 @@ public class DropEggListener implements Listener {
         }
 
         if (config.getBoolen("config.yml", "DropEgg.Enable") && new Random().nextDouble() < config.getDouble("config.yml", "DropEgg.Chance")) {
-            ItemStack spawnEgg = new ItemStack(Material.MONSTER_EGG, 1, entityType.getTypeId());
+            ItemStack spawnEgg = new ItemStack(Objects.requireNonNull(Material.getMaterial(entityType.name() + "_SPAWN_EGG")));
             event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), spawnEgg);
         }
     }
@@ -59,22 +58,10 @@ public class DropEggListener implements Listener {
     }
 
     @EventHandler
-    public void onPrepareAnvil(PrepareAnvilEvent event) {
-        if (config.getBoolen("config.yml", "DropEgg.Rename")) {
-            ItemStack inputItem = event.getInventory().getItem(0);
-            if (inputItem != null && inputItem.getType() == Material.MONSTER_EGG) {
-                event.setResult(null);
-            }
-        }
-    }
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    public void onPlayerInteract(CreatureSpawnEvent event) {
         if (config.getBoolen("config.yml", "DropEgg.SpawnFromEgg")) {
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                ItemStack item = event.getItem();
-                if (item != null && item.getType() == Material.MONSTER_EGG) {
-                    event.setCancelled(true);
-                }
+            if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
+                event.setCancelled(true);
             }
         }
     }
